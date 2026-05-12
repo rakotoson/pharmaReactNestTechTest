@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
 import { MedicinesService } from './medicines.service';
 import { Medicine } from './medicine.entity';
 import { CreateMedicineDto } from './dtos/create-medicine.dto';
 import { UpdateMedicineDto } from './dtos/update-medecine.dto';
+import { QueryMedicineDto } from './dtos/query-medicine.dto';
 
 @Controller('medicines')
 export class MedicinesController {
@@ -13,8 +14,8 @@ export class MedicinesController {
     ) {}
 
     @Get()
-    findAll(): Promise<Medicine[]> {
-        return this.medicinesService.findAll();
+    findAll(@Query() query: QueryMedicineDto) {
+        return this.medicinesService.findAll(query);
     }
 
 

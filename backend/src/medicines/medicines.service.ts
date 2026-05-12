@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Medicine } from './medicine.entity';
 import { CreateMedicineDto } from './dtos/create-medicine.dto';
 import { UpdateMedicineDto } from './dtos/update-medecine.dto';
+import { QueryMedicineDto } from './dtos/query-medicine.dto';
 
 @Injectable()
 export class MedicinesService {
@@ -12,8 +13,20 @@ export class MedicinesService {
         private readonly repo: Repository<Medicine>
     ) {}
 
-    findAll(): Promise<Medicine[]> {
-        return this.repo.find();
+    async findAll(query: QueryMedicineDto): Promise<{
+        data: Medicine[];
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }> {
+        const { page, limit, sortBy, order } = query;
+        const [data, total] = await this.repo.findAndCount({
+            order: { [sortBy]: order },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+        return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
     }
 
     create(createMedicineDto: CreateMedicineDto): Promise<Medicine> {
