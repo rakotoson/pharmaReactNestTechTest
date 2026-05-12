@@ -1,25 +1,16 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useMedicines } from '../hooks/useMedicines'
-import { createMedicine } from '../api/medicines'
+import { useMedicines, useCreateMedicine } from '../hooks/useMedicines'
 import { MedicineForm } from '../components/MedicineForm'
 
 export function MedicinesPage() {
-    const queryClient = useQueryClient()
     const { data, isLoading, error } = useMedicines()
-
-    const mutation = useMutation({
-        mutationFn: createMedicine,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['medicines'] })
-        },
-    })
+    const createMutation = useCreateMedicine()
 
     if (isLoading) return <p>Loading...</p>
     if (error) return <p>Error loading medicines</p>
 
     return (
         <div>
-            <MedicineForm onSubmit={mutation.mutate} />
+            <MedicineForm onSubmit={createMutation.mutate} />
 
             <table>
                 <thead>
