@@ -1,4 +1,4 @@
-import type { Medicine, CreateMedicineDto } from '../types/medicine'
+import type { Medicine, CreateMedicineDto, UpdateMedicineDto } from '../types/medicine'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
@@ -35,7 +35,7 @@ export async function createMedicine(
     if (!res.ok) throw new Error('Failed to create medicine')
     return res.json()
 }
-export async function updateMedicine(id: number, data: CreateMedicineDto): Promise<Medicine> {
+export async function updateMedicine(id: number, data: UpdateMedicineDto): Promise<Medicine> {
     const res = await fetch(`${API_URL}/medicines/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
