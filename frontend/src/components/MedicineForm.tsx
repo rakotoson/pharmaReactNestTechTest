@@ -26,6 +26,11 @@ export function MedicineForm({ onSubmit, initialValues, submitLabel = 'Add', onC
             setPrice(initialValues.price)
             setStock(initialValues.stock)
             setErrors({})
+        } else {
+            setName('')
+            setPrice(0)
+            setStock(0)
+            setErrors({})
         }
     }, [initialValues])
 
@@ -57,40 +62,53 @@ export function MedicineForm({ onSubmit, initialValues, submitLabel = 'Add', onC
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h3>{initialValues ? 'Edit medicine' : 'Add medicine'}</h3>
+        <form className="medicine-form" onSubmit={handleSubmit}>
+            <h3 className="form-title">{initialValues ? 'Edit medicine' : 'Add medicine'}</h3>
 
-            <div>
-                <input
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                {errors.name && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.name}</p>}
+            <div className="form-row">
+                <div className="form-field">
+                    <label className="form-label">Name</label>
+                    <input
+                        className={`form-input${errors.name ? ' form-input--error' : ''}`}
+                        placeholder="e.g. Paracétamol"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    {errors.name && <span className="form-error">{errors.name}</span>}
+                </div>
+
+                <div className="form-field">
+                    <label className="form-label">Price (€)</label>
+                    <input
+                        className={`form-input${errors.price ? ' form-input--error' : ''}`}
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        placeholder="0.00"
+                        value={price}
+                        onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                    {errors.price && <span className="form-error">{errors.price}</span>}
+                </div>
+
+                <div className="form-field">
+                    <label className="form-label">Stock</label>
+                    <input
+                        className={`form-input${errors.stock ? ' form-input--error' : ''}`}
+                        type="number"
+                        min="0"
+                        placeholder="0"
+                        value={stock}
+                        onChange={(e) => setStock(Number(e.target.value))}
+                    />
+                    {errors.stock && <span className="form-error">{errors.stock}</span>}
+                </div>
+
+                <div className="form-actions">
+                    <button className="btn-submit" type="submit">{submitLabel}</button>
+                    {onCancel && <button className="btn-cancel" type="button" onClick={onCancel}>Cancel</button>}
+                </div>
             </div>
-
-            <div>
-                <input
-                    type="number"
-                    placeholder="Price"
-                    value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
-                />
-                {errors.price && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.price}</p>}
-            </div>
-
-            <div>
-                <input
-                    type="number"
-                    placeholder="Stock"
-                    value={stock}
-                    onChange={(e) => setStock(Number(e.target.value))}
-                />
-                {errors.stock && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.stock}</p>}
-            </div>
-
-            <button type="submit">{submitLabel}</button>
-            {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
         </form>
     )
 }
