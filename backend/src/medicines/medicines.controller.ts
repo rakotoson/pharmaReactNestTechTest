@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { MedicinesService } from './medicines.service';
 import { Medicine } from './medicine.entity';
 import { CreateMedicineDto } from './dtos/create-medicine.dto';
+import { UpdateMedicineDto } from './dtos/update-medecine.dto';
 
 @Controller('medicines')
 export class MedicinesController {
@@ -26,4 +27,12 @@ export class MedicinesController {
         console.log(`Medecine crée ID: ${medecine.id}`);
         return medecine
     }   
+
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() updateMedicineDto: UpdateMedicineDto): Promise<Medicine> {
+        const medecine = await this.medicinesService.update(id, updateMedicineDto);
+
+        console.log(`Medecine mise à jour ID: ${medecine.id}`);
+        return medecine;
+    }
 }
