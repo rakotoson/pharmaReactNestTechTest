@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMedicines, useCreateMedicine, useUpdateMedicine } from '../hooks/useMedicines'
+import { useMedicines, useCreateMedicine, useUpdateMedicine, useDeleteMedicine } from '../hooks/useMedicines'
 import { MedicineForm } from '../components/MedicineForm'
 import type { Medicine, UpdateMedicineDto } from '../types/medicine'
 
@@ -7,6 +7,7 @@ export function MedicinesPage() {
     const { data, isLoading, error } = useMedicines()
     const createMutation = useCreateMedicine()
     const updateMutation = useUpdateMedicine()
+    const deleteMutation = useDeleteMedicine()
 
     const [editingMedicine, setEditingMedicine] = useState<Medicine | null>(null)
 
@@ -16,6 +17,11 @@ export function MedicinesPage() {
             { id: editingMedicine.id, data },
             { onSuccess: () => setEditingMedicine(null) }
         )
+    }
+
+    function handleDelete(medicine: Medicine) {
+        if (!window.confirm(`Delete "${medicine.name}"?`)) return
+        deleteMutation.mutate(medicine.id)
     }
 
     if (isLoading) return <p>Loading...</p>
@@ -53,6 +59,12 @@ export function MedicinesPage() {
                             <td>{m.stock}</td>
                             <td>
                                 <button onClick={() => setEditingMedicine(m)}>Edit</button>
+                                <button
+                                    onClick={() => handleDelete(m)}
+                                    disabled={deleteMutation.isPending}
+                                >
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}

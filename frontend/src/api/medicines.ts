@@ -44,3 +44,7 @@ export async function updateMedicine(id: number, data: UpdateMedicineDto): Promi
     if (!res.ok) throw new Error('Failed to update medicine')
     return res.json()
 }
+export async function deleteMedicine(id: number): Promise<void> {
+    const res = await fetch(`${API_URL}/medicines/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Failed to delete medicine')
+}
