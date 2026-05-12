@@ -4,7 +4,10 @@ import { MedicineForm } from '../components/MedicineForm'
 import type { Medicine, UpdateMedicineDto } from '../types/medicine'
 
 export function MedicinesPage() {
-    const { data, isLoading, error } = useMedicines()
+    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(5)
+
+    const { data, isLoading, error } = useMedicines(page, limit)
     const createMutation = useCreateMedicine()
     const updateMutation = useUpdateMedicine()
     const deleteMutation = useDeleteMedicine()
@@ -26,6 +29,8 @@ export function MedicinesPage() {
 
     if (isLoading) return <p>Loading...</p>
     if (error) return <p>Error loading medicines</p>
+
+    const totalPages = data?.totalPages ?? 1
 
     return (
         <div>
@@ -51,15 +56,16 @@ export function MedicinesPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data?.map((m) => (
+                    {data?.data.map((m) => (
                         <tr key={m.id}>
                             <td>{m.id}</td>
                             <td>{m.name}</td>
                             <td>{m.price.toFixed(2)}</td>
                             <td>{m.stock}</td>
                             <td>
-                                <button onClick={() => setEditingMedicine(m)}>Edit</button>
+                                <button className="btn-edit" onClick={() => setEditingMedicine(m)}>Edit</button>
                                 <button
+                                    className="btn-delete"
                                     onClick={() => handleDelete(m)}
                                     disabled={deleteMutation.isPending}
                                 >
@@ -70,6 +76,33 @@ export function MedicinesPage() {
                     ))}
                 </tbody>
             </table>
+
+            <div className="pagination">
+                <button
+                    className="btn-page"
+                    onClick={() => setPage((p) => p - 1)}
+                    disabled={page === 1}
+                >
+                    ← Prev
+                </button>
+                <span className="page-info">Page {page} / {totalPages}</span>
+                <button
+                    className="btn-page"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={page >= totalPages}
+                >
+                    Next →
+                </button>
+                <select
+                    className="per-page-select"
+                    value={limit}
+                    onChange={(e) => { setLimit(Number(e.target.value)); setPage(1) }}
+                >
+                    {[5, 10, 20].map((n) => (
+                        <option key={n} value={n}>{n} / page</option>
+                    ))}
+                </select>
+            </div>
         </div>
     )
 }

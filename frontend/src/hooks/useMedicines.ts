@@ -4,10 +4,11 @@ import type { CreateMedicineDto, UpdateMedicineDto } from '../types/medicine'
 
 export const MEDICINES_KEY = ['medicines']
 
-export function useMedicines() {
+export function useMedicines(page: number = 1, limit: number = 5) {
     return useQuery({
-        queryKey: MEDICINES_KEY,
-        queryFn: fetchMedicines,
+        queryKey: [...MEDICINES_KEY, page, limit],
+        queryFn: () => fetchMedicines(page, limit),
+        placeholderData: (prev) => prev,
     })
 }
 
