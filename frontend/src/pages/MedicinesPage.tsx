@@ -31,7 +31,6 @@ export function MedicinesPage() {
     }
 
     if (isLoading) return <p>Loading...</p>
-    if (error) return <p>Error loading medicines</p>
 
     const totalPages = data?.totalPages ?? 1
 
