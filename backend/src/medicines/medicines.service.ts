@@ -29,4 +29,12 @@ export class MedicinesService {
         Object.assign(medicine, updateMedicineDto);
         return this.repo.save(medicine);
     }
+
+    async remove(id: number): Promise<void> {
+        const medicine = await this.repo.findOneBy({ id });
+        if (!medicine) {
+            throw new NotFoundException(`Le médicament #${id} n'existe pas`);
+        }
+        await this.repo.remove(medicine);
+    }
 }
