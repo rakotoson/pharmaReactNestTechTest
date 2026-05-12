@@ -9,4 +9,8 @@ export class MedicinesService {
         @InjectRepository(Medicine)
         private readonly repo: Repository<Medicine>
     ) {}
+
+    findAll(): Promise<Medicine[]> {
+        return this.repo.find();
+    }
 }
