@@ -1,8 +1,11 @@
-import { useState } from 'react'
-import type { CreateMedicineDto } from '../types/medicine'
+import { useState, useEffect } from 'react'
+import type { CreateMedicineDto, UpdateMedicineDto } from '../types/medicine'
 
 interface Props {
     onSubmit: (data: CreateMedicineDto) => void
+    initialValues?: UpdateMedicineDto
+    submitLabel?: string
+    onCancel?: () => void
 }
 
 interface FormErrors {
@@ -11,11 +14,20 @@ interface FormErrors {
     stock?: string
 }
 
-export function MedicineForm({ onSubmit }: Props) {
-    const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
-    const [stock, setStock] = useState(0)
+export function MedicineForm({ onSubmit, initialValues, submitLabel = 'Add', onCancel }: Props) {
+    const [name, setName] = useState(initialValues?.name ?? '')
+    const [price, setPrice] = useState(initialValues?.price ?? 0)
+    const [stock, setStock] = useState(initialValues?.stock ?? 0)
     const [errors, setErrors] = useState<FormErrors>({})
+
+    useEffect(() => {
+        if (initialValues) {
+            setName(initialValues.name)
+            setPrice(initialValues.price)
+            setStock(initialValues.stock)
+            setErrors({})
+        }
+    }, [initialValues])
 
     function validate(): FormErrors {
         const e: FormErrors = {}
@@ -36,14 +48,17 @@ export function MedicineForm({ onSubmit }: Props) {
 
         setErrors({})
         onSubmit({ name, price, stock })
-        setName('')
-        setPrice(0)
-        setStock(0)
+
+        if (!initialValues) {
+            setName('')
+            setPrice(0)
+            setStock(0)
+        }
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <h3>Add medicine</h3>
+            <h3>{initialValues ? 'Edit medicine' : 'Add medicine'}</h3>
 
             <div>
                 <input
@@ -74,7 +89,8 @@ export function MedicineForm({ onSubmit }: Props) {
                 {errors.stock && <p style={{ color: 'red', fontSize: '0.8rem' }}>{errors.stock}</p>}
             </div>
 
-            <button type="submit">Add</button>
+            <button type="submit">{submitLabel}</button>
+            {onCancel && <button type="button" onClick={onCancel}>Cancel</button>}
         </form>
     )
 }

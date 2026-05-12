@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchMedicines, createMedicine } from '../api/medicines'
-import type { CreateMedicineDto } from '../types/medicine'
+import { fetchMedicines, createMedicine, updateMedicine } from '../api/medicines'
+import type { CreateMedicineDto, UpdateMedicineDto } from '../types/medicine'
 
 export const MEDICINES_KEY = ['medicines']
 
@@ -15,6 +15,15 @@ export function useCreateMedicine() {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (data: CreateMedicineDto) => createMedicine(data),
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: MEDICINES_KEY }),
+    })
+}
+
+export function useUpdateMedicine() {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: ({ id, data }: { id: number; data: UpdateMedicineDto }) =>
+            updateMedicine(id, data),
         onSuccess: () => queryClient.invalidateQueries({ queryKey: MEDICINES_KEY }),
     })
 }

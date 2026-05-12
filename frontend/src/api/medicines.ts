@@ -35,3 +35,12 @@ export async function createMedicine(
     if (!res.ok) throw new Error('Failed to create medicine')
     return res.json()
 }
+export async function updateMedicine(id: number, data: CreateMedicineDto): Promise<Medicine> {
+    const res = await fetch(`${API_URL}/medicines/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    })
+    if (!res.ok) throw new Error('Failed to update medicine')
+    return res.json()
+}

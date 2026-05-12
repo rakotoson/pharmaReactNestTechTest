@@ -6,3 +6,4 @@ export interface Medicine {
 }
 
 export type CreateMedicineDto = Omit<Medicine, 'id'>
+export type UpdateMedicineDto = Pick<Medicine,  'name' | 'price' | 'stock'>;
