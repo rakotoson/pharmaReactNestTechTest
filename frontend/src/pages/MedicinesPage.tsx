@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { useMedicines, useCreateMedicine, useUpdateMedicine, useDeleteMedicine } from '../hooks/useMedicines'
 import { MedicineForm } from '../components/MedicineForm'
-import type { Medicine, UpdateMedicineDto } from '../types/medicine'
+import type { Medicine, UpdateMedicineDto, SortBy, SortOrder } from '../types/medicine'
 
 export function MedicinesPage() {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(5)
     const [search, setSearch] = useState('')
+    const [sortBy, setSortBy] = useState<SortBy>('name')
+    const [order, setOrder] = useState<SortOrder>('ASC')
 
-    const { data, isLoading, error } = useMedicines(page, limit, search)
+    const { data, isLoading, error } = useMedicines(page, limit, search, sortBy, order)
     const createMutation = useCreateMedicine()
     const updateMutation = useUpdateMedicine()
     const deleteMutation = useDeleteMedicine()
@@ -32,6 +34,23 @@ export function MedicinesPage() {
     if (error) return <p>Error loading medicines</p>
 
     const totalPages = data?.totalPages ?? 1
+
+    function handleSort(column: SortBy) {
+        if (sortBy === column) {
+            setOrder(order === 'ASC' ? 'DESC' : 'ASC')
+        } else {
+            setSortBy(column)
+            setOrder('ASC')
+        }
+        setPage(1) // Reset to page 1 on sort change
+    }
+
+    const renderSortIndicator = (column: SortBy) => {
+        if (sortBy !== column) {
+            return <span style={{ opacity: 0.3, marginLeft: 4 }}>↕</span>
+        }
+        return <span style={{ marginLeft: 4 }}>{order === 'ASC' ? '↑' : '↓'}</span>
+    }
 
     return (
         <div>
@@ -63,9 +82,15 @@ export function MedicinesPage() {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Price (€)</th>
-                        <th>Stock</th>
+                        <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('name')}>
+                            Name{renderSortIndicator('name')}
+                        </th>
+                        <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('price')}>
+                            Price (€){renderSortIndicator('price')}
+                        </th>
+                        <th style={{ cursor: 'pointer', userSelect: 'none' }} onClick={() => handleSort('stock')}>
+                            Stock{renderSortIndicator('stock')}
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>

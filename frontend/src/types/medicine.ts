@@ -15,3 +15,7 @@ export interface PaginatedResponse<T> {
     limit: number
     totalPages: number
 }
+
+export type SortBy = 'name' | 'price' | 'stock'
+export type SortOrder = 'ASC' | 'DESC'
+

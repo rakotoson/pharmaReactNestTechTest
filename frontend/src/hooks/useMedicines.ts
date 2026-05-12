@@ -1,13 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchMedicines, createMedicine, updateMedicine, deleteMedicine } from '../api/medicines'
-import type { CreateMedicineDto, UpdateMedicineDto } from '../types/medicine'
+import type { CreateMedicineDto, UpdateMedicineDto, SortBy, SortOrder } from '../types/medicine'
 
 export const MEDICINES_KEY = ['medicines']
 
-export function useMedicines(page: number = 1, limit: number = 5, search: string = '') {
+export function useMedicines(
+    page: number = 1,
+    limit: number = 5,
+    search: string = '',
+    sortBy: SortBy = 'name',
+    order: SortOrder = 'ASC'
+) {
     return useQuery({
-        queryKey: [...MEDICINES_KEY, page, limit, search],
-        queryFn: () => fetchMedicines(page, limit, search),
+        queryKey: [...MEDICINES_KEY, page, limit, search, sortBy, order],
+        queryFn: () => fetchMedicines(page, limit, search, sortBy, order),
         placeholderData: (prev) => prev,
     })
 }

@@ -1,4 +1,4 @@
-import type { Medicine, CreateMedicineDto, UpdateMedicineDto, PaginatedResponse } from '../types/medicine'
+import type { Medicine, CreateMedicineDto, UpdateMedicineDto, PaginatedResponse, SortBy, SortOrder } from '../types/medicine'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8080'
 
@@ -10,8 +10,19 @@ async function handleResponse<T>(res: Response): Promise<T> {
     return res.json()
 }
 
-export async function fetchMedicines(page = 1, limit = 5, search = ''): Promise<PaginatedResponse<Medicine>> {
-    const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+export async function fetchMedicines(
+    page = 1,
+    limit = 5,
+    search = '',
+    sortBy: SortBy = 'name',
+    order: SortOrder = 'ASC'
+): Promise<PaginatedResponse<Medicine>> {
+    const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        sortBy,
+        order
+    })
     if (search) params.append('search', search)
     const res = await fetch(`${API_URL}/medicines?${params}`)
     if (!res.ok) {
