@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, ILike } from 'typeorm';
 import { Medicine } from './medicine.entity';
 import { CreateMedicineDto } from './dtos/create-medicine.dto';
 import { UpdateMedicineDto } from './dtos/update-medecine.dto';
@@ -20,8 +20,9 @@ export class MedicinesService {
         limit: number;
         totalPages: number;
     }> {
-        const { page, limit, sortBy, order } = query;
+        const { page, limit, sortBy, order, search } = query;
         const [data, total] = await this.repo.findAndCount({
+            where: search ? { name: ILike(`%${search}%`) } : {},
             order: { [sortBy]: order },
             skip: (page - 1) * limit,
             take: limit,

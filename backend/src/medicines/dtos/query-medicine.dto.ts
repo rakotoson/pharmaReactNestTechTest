@@ -22,4 +22,8 @@ export class QueryMedicineDto {
     @IsOptional()
     @IsIn(['ASC', 'DESC'])
     order: 'ASC' | 'DESC' = 'ASC';
+
+    @IsOptional()
+    @IsString()
+    search?: string;
 }

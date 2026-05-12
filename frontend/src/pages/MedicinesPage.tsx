@@ -6,8 +6,9 @@ import type { Medicine, UpdateMedicineDto } from '../types/medicine'
 export function MedicinesPage() {
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(5)
+    const [search, setSearch] = useState('')
 
-    const { data, isLoading, error } = useMedicines(page, limit)
+    const { data, isLoading, error } = useMedicines(page, limit, search)
     const createMutation = useCreateMedicine()
     const updateMutation = useUpdateMedicine()
     const deleteMutation = useDeleteMedicine()
@@ -44,6 +45,19 @@ export function MedicinesPage() {
             ) : (
                 <MedicineForm onSubmit={createMutation.mutate} />
             )}
+
+            <div style={{ marginTop: '24px', marginBottom: '16px' }}>
+                <input
+                    className="form-input"
+                    style={{ maxWidth: '300px' }}
+                    placeholder="Search by name..."
+                    value={search}
+                    onChange={(e) => {
+                        setSearch(e.target.value)
+                        setPage(1)
+                    }}
+                />
+            </div>
 
             <table>
                 <thead>

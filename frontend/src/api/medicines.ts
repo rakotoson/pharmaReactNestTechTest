@@ -10,8 +10,9 @@ async function handleResponse<T>(res: Response): Promise<T> {
     return res.json()
 }
 
-export async function fetchMedicines(page = 1, limit = 5): Promise<PaginatedResponse<Medicine>> {
+export async function fetchMedicines(page = 1, limit = 5, search = ''): Promise<PaginatedResponse<Medicine>> {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+    if (search) params.append('search', search)
     const res = await fetch(`${API_URL}/medicines?${params}`)
     if (!res.ok) {
         const err = await res.json().catch(() => ({ message: 'Request failed' }))
