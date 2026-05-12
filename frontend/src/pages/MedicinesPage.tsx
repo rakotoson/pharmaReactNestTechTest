@@ -1,14 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchMedicines, createMedicine } from '../api/medicines'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMedicines } from '../hooks/useMedicines'
+import { createMedicine } from '../api/medicines'
 import { MedicineForm } from '../components/MedicineForm'
 
 export function MedicinesPage() {
     const queryClient = useQueryClient()
-
-    const { data, isLoading, error } = useQuery({
-        queryKey: ['medicines'],
-        queryFn: fetchMedicines,
-    })
+    const { data, isLoading, error } = useMedicines()
 
     const mutation = useMutation({
         mutationFn: createMedicine,
@@ -24,13 +21,26 @@ export function MedicinesPage() {
         <div>
             <MedicineForm onSubmit={mutation.mutate} />
 
-            <ul>
-                {data?.map((m) => (
-                    <li key={m.id}>
-                        {m.name} – {m.price} € – Stock: {m.stock}
-                    </li>
-                ))}
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price (€)</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data?.map((m) => (
+                        <tr key={m.id}>
+                            <td>{m.id}</td>
+                            <td>{m.name}</td>
+                            <td>{m.price.toFixed(2)}</td>
+                            <td>{m.stock}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     )
 }
